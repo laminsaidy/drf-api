@@ -1,0 +1,5 @@
+Django==5.1.4
+djangorestframework==3.15.0
+gunicorn==24.1.0  # If deploying to Heroku or similar
+psycopg2-binary==2.9.8  # If using PostgreSQL
+requests==2.32.3  # If making API calls
