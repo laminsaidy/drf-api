@@ -1,5 +1,13 @@
+asgiref==3.8.1
+certifi==2024.12.14
+charset-normalizer==3.4.1
 Django==5.1.4
+django-cors-headers==4.6.0
+django-environ==0.11.2
 djangorestframework==3.15.0
-#gunicorn==24.1.0  # If deploying to Heroku or similar
-psycopg-binary # If using PostgreSQL
-requests==2.32.3  # If making API calls
+idna==3.10
+psycopg-binary==3.2.3
+psycopg2-binary==2.9.10
+requests==2.32.3
+sqlparse==0.5.3
+urllib3==2.3.0
