@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
 
+
 ]
 
 CORS_ALLOW_METHODS = [
@@ -96,16 +97,11 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-   "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "blogeeks",
-        "USER": "postgres",
-        "PASSWORD": "734862",
-        "HOST": "localhost",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',  # Use SQLite database engine
+        'NAME': BASE_DIR / 'db.sqlite3',  # The database file (relative to your base directory)
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -147,4 +143,4 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
+CORS_ALLOW_ALL_ORIGINS = True
