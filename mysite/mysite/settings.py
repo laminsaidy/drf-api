@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,10 +14,9 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-7jit)w8=u*&aws
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['*']  # For Heroku deployment
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
-
 INSTALLED_APPS = [
     "corsheaders",
     "django.contrib.admin",
@@ -25,13 +25,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "api",  
+    "api",
     "rest_framework",
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -40,12 +41,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  
-    "https://your-frontend-domain.com",  
-]
-
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS configuration
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ORIGIN_ALLOW_ALL = bool(os.environ.get('CORS_ORIGIN_ALLOW_ALL', 'False'))
 
 ROOT_URLCONF = "mysite.urls"
 
@@ -67,28 +65,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "mysite.wsgi.application"
 
-# Database configuration for local development (SQLite)
+# Database configuration for Render (PostgreSQL)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',  # Using SQLite for local development
-    }
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3', conn_max_age=600),
 }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 # Internationalization
@@ -98,18 +85,36 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-# For Heroku deployment
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Define static root directory for Heroku
+STATIC_ROOT = BASE_DIR / "staticfiles"  # For collecting static files during deployment
 
-# Collect static files to the staticfiles directory during deployment
-django_heroku.settings(locals())
+# Add Whitenoise settings for static files
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Security settings
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Security Settings for Heroku
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = ['https://your-frontend-domain.com']
+# Logging for production
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
 
-CORS_ALLOW_ALL_ORIGINS = True
+# Collect static files during deployment
+if DEBUG is False:
+    # Additional Render-specific settings
+    ALLOWED_HOSTS = ['my-drf-api.onrender.com']
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600)
