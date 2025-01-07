@@ -12,7 +12,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-default-key-for-dev')
 # Quick-start development settings - unsuitable for production
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'drf-api-5-7396418269ad.herokuapp.com').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -43,8 +43,17 @@ MIDDLEWARE = [
 ]
 
 # CORS configuration
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    'CORS_ALLOWED_ORIGINS',
+    'https://your-frontend-url.com,https://drf-api-5-7396418269ad.herokuapp.com'
+).split(',')
 CORS_ORIGIN_ALLOW_ALL = bool(os.environ.get('CORS_ORIGIN_ALLOW_ALL', 'False'))
+
+# CSRF trusted origins
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://your-frontend-url.com,https://drf-api-5-7396418269ad.herokuapp.com'
+).split(',')
 
 ROOT_URLCONF = "mysite.urls"  # Change this to your root URL conf
 
@@ -73,6 +82,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+if not DEBUG:
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 # JWT settings (if used for authentication)
 SIMPLE_JWT = {
@@ -115,20 +127,16 @@ else:
 
 # Security settings for Heroku
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000').split(',')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 31536000  # Enable HTTP Strict Transport Security
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Collect static files during deployment
 if not DEBUG:
-    ALLOWED_HOSTS = ['your-heroku-app.herokuapp.com']
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-
-    # Ensure HTTPS redirection and secure cookies
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 31536000  # Enable HTTP Strict Transport Security
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+    ALLOWED_HOSTS = ['drf-api-5-7396418269ad.herokuapp.com']
