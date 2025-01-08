@@ -15,4 +15,4 @@ class BlogPostSerializer(serializers.ModelSerializer):
         fields = ['title', 'content', 'published_date', 'author', 'id', 'vote_count']
 
     def get_vote_count(self, obj):
-        return obj.vote_set.count()  # Returns the count of votes for this post
+        return obj.votes.count()  # Returns the count of votes for this post
