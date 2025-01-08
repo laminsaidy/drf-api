@@ -17,20 +17,12 @@ class VoteListView(APIView):
 @api_view(['POST'])
 def vote_post(request, post_id):
     post = BlogPost.objects.get(id=post_id)
-
-    # Check if the user has already voted on this post
-    existing_vote = Vote.objects.filter(user=request.user, post=post).first()
-    if existing_vote:
-        existing_vote.vote_type = request.data['vote_type']
-        existing_vote.save()
-        return Response(VoteSerializer(existing_vote).data)
-
+    
     # If no existing vote, create a new one
-    vote = Vote.objects.create(user=request.user, post=post, vote_type=request.data['vote_type'])
+    vote = Vote.objects.create( post=post, vote_type=request.data['vote_type'])
     return Response(VoteSerializer(vote).data, status=status.HTTP_201_CREATED)
 
 
-from rest_framework.views import APIView  
 
 class UpdateBlogPosts(APIView):
     def put(self, request, *args, **kwargs):
