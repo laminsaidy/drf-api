@@ -1,11 +1,18 @@
 from rest_framework import serializers
 from .models import BlogPost
+from .models import Vote
+
+class VoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vote
+        fields = ['id', 'user', 'post', 'vote_type', 'created_at']
 
 class BlogPostSerializer(serializers.ModelSerializer):
+    vote_count = serializers.SerializerMethodField()
+
     class Meta:
         model = BlogPost
-        fields = ['title', 'content', 'published_date', 'author', 'id']  # Include author
+        fields = ['title', 'content', 'published_date', 'author', 'id', 'vote_count']
 
-    # Optionally, you can use a custom method to get the author's name
-    def get_author(self, obj):
-        return obj.author.username  # Return the author's username instead of the User object
+    def get_vote_count(self, obj):
+        return obj.vote_set.count()  # Returns the count of votes for this post
