@@ -9,7 +9,11 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
+# Signal to ensure a default category is created after migrations
+@receiver(post_migrate)
+def create_default_category(sender, **kwargs):
+    if sender.name == "api":  # Replace "api" with your app name
+        Category.objects.get_or_create(id=1, defaults={"name": "Default"})
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=100)
