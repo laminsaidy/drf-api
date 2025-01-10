@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -7,12 +9,18 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+# Signal to ensure a default category is created after migrations
+@receiver(post_migrate)
+def create_default_category(sender, **kwargs):
+    if sender.name == "api":  # Replace "api" with your app name
+        Category.objects.get_or_create(id=1, defaults={"name": "Default"})
+
 class BlogPost(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)  # Assuming category with ID 1 exists
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
         return self.title
