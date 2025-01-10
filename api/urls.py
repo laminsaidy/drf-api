@@ -2,6 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # Redirect from the root URL to /blogposts/
+    path('', lambda request: redirect('/blogposts/')),
+
+    # Existing URL paths
     path('blogposts/', views.BlogPostListCreate.as_view(), name='blogpost_list_create'),
     path("blogposts/<int:pk>/", views.BlogPostRetrieveUpdateDestroy.as_view(), name="update"),
     path('blogposts/<int:post_id>/vote/', views.vote_post, name='vote_post'),
