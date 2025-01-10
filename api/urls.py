@@ -1,9 +1,10 @@
 from django.urls import path
+from django.shortcuts import redirect
 from . import views
 
 urlpatterns = [
     # Redirect from the root URL to /blogposts/
-    path('', lambda request: redirect('/blogposts/')),
+    path('', lambda request: redirect('blogposts/')),  
 
     # Existing URL paths
     path('blogposts/', views.BlogPostListCreate.as_view(), name='blogpost_list_create'),
