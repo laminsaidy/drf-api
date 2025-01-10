@@ -23,10 +23,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "api",  # Replace with your actual app names
+    "api",  
     "rest_framework",
-    'dj_rest_auth',         # For JWT authentication
-    'dj_rest_auth.registration',  # For JWT authentication
+    'dj_rest_auth',         
+    'dj_rest_auth.registration',  
     'rest_framework.authtoken',
 ]
 
@@ -55,7 +55,7 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
     'https://your-frontend-url.com,https://drf-api-5-7396418269ad.herokuapp.com'
 ).split(',')
 
-ROOT_URLCONF = "mysite.urls"  # Change this to your root URL conf
+ROOT_URLCONF = "api.urls" 
 
 TEMPLATES = [
     {
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "mysite.wsgi.application"  # Change this to your actual WSGI application
+WSGI_APPLICATION = "mysite.wsgi.application" 
 
 # Database configuration for Heroku (PostgreSQL)
 DATABASES = {
